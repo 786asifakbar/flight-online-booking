@@ -126,3 +126,32 @@ function logout() {
     localStorage.removeItem('currentUser');
     window.location.href = 'index.html';
 }
+// Function to load bookings and display them
+function loadBookings() {
+    const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+    const bookingList = document.getElementById('booking-items');
+    bookingList.innerHTML = ''; // Clear existing items
+
+    bookings.forEach((booking, index) => {
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `
+            <span>Booking ID: ${booking.paymentId} - Amount: ${booking.amount}</span>
+            <button class="btn btn-danger btn-sm" onclick="cancelBooking(${index})">Cancel Ticket</button>
+        `;
+        bookingList.appendChild(listItem);
+    });
+}
+
+// Function to cancel a booking
+function cancelBooking(index) {
+    const bookings = JSON.parse(localStorage.getItem('bookings') || '[]');
+    if (confirm('Are you sure you want to cancel this ticket?')) {
+        bookings.splice(index, 1); // Remove the booking
+        localStorage.setItem('bookings', JSON.stringify(bookings)); // Update local storage
+        loadBookings(); // Refresh the booking list
+        alert('Your ticket has been canceled.');
+    }
+}
+
+// Call loadBookings on page load
+document.addEventListener('DOMContentLoaded', loadBookings);
